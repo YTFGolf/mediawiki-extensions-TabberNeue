@@ -21,7 +21,7 @@ class TabberWikitextProcessor implements WikitextProcessor {
 
 	/**
 	 * Processes the raw wikitext input for tabber.
-	 * Returns an array of TabModel objects on success, or an HTML string on error.
+	 * Returns an array of TabModel objects on success.
 	 *
 	 * @return TabModel[]
 	 */
@@ -45,7 +45,7 @@ class TabberWikitextProcessor implements WikitextProcessor {
 
 	/**
 	 * Processes the [ 'label1' => ..., 'content1' => ... ] input for tabber.
-	 * Returns an array of TabModel objects on success, or an HTML string on error.
+	 * Returns an array of TabModel objects on success.
 	 *
 	 * @return TabModel[]
 	 */
@@ -61,7 +61,8 @@ class TabberWikitextProcessor implements WikitextProcessor {
 			$rawLabel = $tabData['label'.$counter];
 
 			if (!isset($tabData['content'.$counter])) {
-				return 'html string';
+				// TODO some real error handling
+				continue;
 			}
 			$rawContent = $tabData['content'.$counter];
 
