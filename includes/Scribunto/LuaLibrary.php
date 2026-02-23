@@ -51,6 +51,10 @@ class LuaLibrary extends LibraryBase {
 			$tagParams['content' . $nextCounter] = $tab['content'];
 		}
 
+		if ($nextCounter == 0) {
+			throw new LuaError( 'No arguments provided to tabber' );
+		}
+
 		return $tagParams;
 	}
 }
