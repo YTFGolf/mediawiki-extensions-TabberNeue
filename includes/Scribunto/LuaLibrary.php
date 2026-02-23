@@ -27,7 +27,14 @@ class LuaLibrary extends LibraryBase {
 		// Instead of converting to wikitext and then parsing it again.
 		$wikitext = $this->convertToWikitext( $tabData );
 
-		return [ $this->getParser()->recursiveTagParse( $wikitext ) ];
+		if ( $wikitext === '' ) {
+			return '';
+		}
+
+		$parser = $this->getParser();
+		$frame = $parser->getPreprocessor()->newFrame();
+
+		return [ $parser->callParserFunction( $frame, '#tag', ['tabber', $wikitext] )['text'] ];
 	}
 
 	/**
@@ -44,13 +51,9 @@ class LuaLibrary extends LibraryBase {
 				throw new LuaError( 'Tab label and content must be strings' );
 			}
 
-			$wikitext .= '{{!}}-{{!}}' . $tab['label'] . '=' . $tab['content'];
+			$wikitext .= '|-|' . $tab['label'] . '=' . $tab['content'];
 		}
 
-		if ( $wikitext === '' ) {
-			return '';
-		}
-
-		return '{{#tag:tabber|' . $wikitext . '}}';
+		return $wikitext;
 	}
 }
