@@ -23,25 +23,20 @@ class LuaLibrary extends LibraryBase {
 	public function render( $tabData = null ): array {
 		$this->checkType( 'mw.ext.tabber.render', 1, $tabData, 'table' );
 
-		// TODO: We should pass the data directly to the Tabber classes.
-		// Instead of converting to wikitext and then parsing it again.
-		$wikitext = $this->convertToWikitext( $tabData );
-
-		if ( $wikitext === '' ) {
-			return '';
-		}
+		$tagParams = $this->convertToTagParams( $tabData );
 
 		$parser = $this->getParser();
 		$frame = $parser->getPreprocessor()->newFrame();
 
-		return [ $parser->callParserFunction( $frame, '#tag', ['tabber', $wikitext] )['text'] ];
+		return [ $parser->callParserFunction( $frame, '#tag', $tagParams)['text'] ];
 	}
 
 	/**
 	 * @throws LuaError If the tab data is invalid.
 	 */
-	private function convertToWikitext( array $tabData ): string {
-		$wikitext = '';
+	private function convertToTagParams( array $tabData ): array {
+		$tagParams = [ 'tabber', '' ];
+		$nextCounter = 0;
 		foreach ( $tabData as $tab ) {
 			if ( !is_array( $tab ) || !isset( $tab['label'], $tab['content'] ) ) {
 				throw new LuaError( 'Tab must be an array with label and content keys' );
@@ -51,9 +46,11 @@ class LuaLibrary extends LibraryBase {
 				throw new LuaError( 'Tab label and content must be strings' );
 			}
 
-			$wikitext .= '|-|' . $tab['label'] . '=' . $tab['content'];
+			$nextCounter++;
+			$tagParams['label' . $nextCounter] = $tab['label'];
+			$tagParams['content' . $nextCounter] = $tab['content'];
 		}
 
-		return $wikitext;
+		return $tagParams;
 	}
 }
