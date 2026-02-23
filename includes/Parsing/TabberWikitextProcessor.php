@@ -44,6 +44,37 @@ class TabberWikitextProcessor implements WikitextProcessor {
 	}
 
 	/**
+	 * Processes the [ 'label1' => ..., 'content1' => ... ] input for tabber.
+	 * Returns an array of TabModel objects on success, or an HTML string on error.
+	 *
+	 * @return TabModel[]
+	 */
+	public function processTabData( array $tabData ): array {
+		$counter = 0;
+		$tabModels = [];
+
+		while (true) {
+			$counter++;
+			if (!isset($tabData['label'.$counter])) {
+				break;
+			}
+			$rawLabel = $tabData['label'.$counter];
+
+			if (!isset($tabData['content'.$counter])) {
+				return 'html string';
+			}
+			$rawContent = $tabData['content'.$counter];
+
+			$tabModel = $this->parseTab( $rawLabel, $rawContent );
+			if ( $tabModel !== null ) {
+				$tabModels[] = $tabModel;
+			}
+		}
+
+		return $tabModels;
+	}
+
+	/**
 	 * Parses a single tab segment (label=content).
 	 */
 	private function parseTabSegment( string $tabSegment ): ?TabModel {
@@ -52,7 +83,10 @@ class TabberWikitextProcessor implements WikitextProcessor {
 			return null;
 		}
 		[ $rawLabel, $rawContent ] = $parts;
+		return $this->parseTab( $rawLabel, $rawContent );
+	}
 
+	private function parseTab( string $rawLabel, string $rawContent ): ?TabModel {
 		$label = $this->parseTabLabel( $rawLabel );
 		if ( $label === '' ) {
 			return null;

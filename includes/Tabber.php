@@ -59,7 +59,12 @@ class Tabber {
 			$this->tabNameHelper
 		);
 
-		$tabModels = $processor->process( $input );
+		if ($input == '' && isset($args['label1'])) {
+			$tabModels = $processor->processTabData( $args );
+		}
+		else {
+			$tabModels = $processor->process( $input );
+		}
 
 		$tabsData = [];
 		$addTabPrefixConfig = $this->config->get( 'TabberNeueAddTabPrefix' );
