@@ -30,6 +30,13 @@ class Hooks implements ParserFirstCallInitHook {
 	 * @param Parser $parser
 	 */
 	public function onParserFirstCallInit( $parser ): void {
+		// echo "<pre>";
+		// echo "\nconf\n";
+		// print_r($this->config);
+		// echo "\nparser\n";
+		// print_r($this->templateParser);
+		// echo "\nfin\n";
+		// echo "</pre>";
 		$parser->setHook( 'tabber', [ new Tabber(
 			$this->config,
 			$this->templateParser,

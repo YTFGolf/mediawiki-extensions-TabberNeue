@@ -6,6 +6,12 @@ namespace MediaWiki\Extension\TabberNeue\Scribunto;
 
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LibraryBase;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
+use MediaWiki\Extension\TabberNeue\Service\TabNameHelper;
+use MediaWiki\Extension\TabberNeue\Tabber;
+use MediaWiki\Html\TemplateParser;
+use MediaWiki\Html\Html;
+use MediaWiki\MediaWikiServices;
+
 
 class LuaLibrary extends LibraryBase {
 
@@ -20,8 +26,37 @@ class LuaLibrary extends LibraryBase {
 		return $this->getEngine()->registerInterface( __DIR__ . DIRECTORY_SEPARATOR . 'mw.ext.tabber.lua', $lib, [] );
 	}
 
-	public function render( $tabData = null ): array {
+	public function render( $tabData = null): array {
 		$this->checkType( 'mw.ext.tabber.render', 1, $tabData, 'table' );
+
+		/*
+		$templateParser = new TemplateParser( __DIR__ . '/templates' );
+		$tabNameHelper = new TabNameHelper(true);
+		$services = MediaWikiServices::getInstance();
+
+		$config = $services->getMainConfig();
+
+		$tabber = new Tabber(
+			$config,
+			$templateParser,
+			$tabNameHelper,
+		);
+
+		$parser = $this->getParser();
+		$frame = $parser->getPreprocessor()->newFrame();
+		$parser->setOutputType(4);
+		$rawHtml = $tabber->renderTabData($tabData, [], $parser, $frame);
+		echo "<pre>\n";
+		echo $rawHtml;
+		echo '<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><div style="clear:both"';
+		$po = $this->getParserOptions();
+		echo "\n\n";
+		// print_r($po);
+		echo "\n</pre>";
+		    // $parserOutput = new ParserOutput();
+    // $parserOutput->setText( $rawHtml );
+			return  [Html::rawElement("div", [], $rawHtml)] ;
+		 */
 
 		// TODO: We should pass the data directly to the Tabber classes.
 		// Instead of converting to wikitext and then parsing it again.

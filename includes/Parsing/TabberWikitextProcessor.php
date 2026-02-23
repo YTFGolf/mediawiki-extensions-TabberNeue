@@ -34,7 +34,7 @@ class TabberWikitextProcessor implements WikitextProcessor {
 				continue;
 			}
 
-			$tabModel = $this->parseTabSegment( $segment );
+			$tabModel = $this->parseTabWikitextSegment( $segment );
 			if ( $tabModel !== null ) {
 				$tabModels[] = $tabModel;
 			}
@@ -44,15 +44,43 @@ class TabberWikitextProcessor implements WikitextProcessor {
 	}
 
 	/**
-	 * Parses a single tab segment (label=content).
+	 * Processes the ['label', 'content'] input for tabber
+	 * Returns an array of TabModel objects on success, or an HTML string on error.
+	 *
+	 * @return TabModel[]
 	 */
-	private function parseTabSegment( string $tabSegment ): ?TabModel {
+	public function processTabData( array $tabData ): array {
+		$tabModels = [];
+		print_r($tabData);
+
+		foreach ( $tabData as $tab ) {
+			if ( empty( trim( $tab['label'] ) || empty(trim($tab['content'])) ) ) {
+				continue;
+			}
+
+			$tabModel = $this->parseTabSegment( $tab['label'], $tab['content'] );
+			// TODO: check Scribunto/LuaLibrary for error handling
+			if ( $tabModel !== null ) {
+				$tabModels[] = $tabModel;
+			}
+		}
+
+		return $tabModels;
+	}
+
+	/**
+	 * Parses a single tab segment wikitext (label=content).
+	 */
+	private function parseTabWikitextSegment( string $tabSegment ): ?TabModel {
 		$parts = explode( '=', $tabSegment, 2 );
 		if ( count( $parts ) < 2 ) {
 			return null;
 		}
 		[ $rawLabel, $rawContent ] = $parts;
+		return $this->parseTabSegment( $rawLabel, $rawContent );
+	}
 
+	private function parseTabSegment( string $rawLabel, string $rawContent ): ?TabModel {
 		$label = $this->parseTabLabel( $rawLabel );
 		if ( $label === '' ) {
 			return null;

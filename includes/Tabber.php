@@ -49,7 +49,7 @@ class Tabber {
 	}
 
 	/**
-	 * Renders the necessary HTML for a <tabber> tag.
+	 * Renders the necessary HTML for a <tabber> tag from raw wikitext.
 	 */
 	public function render( string $input, array $args, Parser $parser, PPFrame $frame ): string {
 		$processor = new TabberWikitextProcessor(
@@ -60,7 +60,35 @@ class Tabber {
 		);
 
 		$tabModels = $processor->process( $input );
+		return $this->renderProcessedTabModels( $tabModels, $args );
+	}
 
+	/**
+	 * Renders the necessary HTML for a <tabber> tag from key-value tab data.
+	 */
+	public function renderTabData( ?array $tabData, array $args, Parser $parser, PPFrame $frame ): string {
+		$parserOutput = $parser->getOutput();
+		$parserOutput->addModuleStyles( [ 'ext.tabberNeue.init.styles' ] );
+		$parserOutput->addModules( [ 'ext.tabberNeue' ] );
+		$parser->addTrackingCategory( 'tabberneue-tabber-category' );
+		$parser->setOutputType(3);
+
+		if ($tabData === null){
+			return '';
+		}
+		$processor = new TabberWikitextProcessor(
+			$parser,
+			$frame,
+			$this->config,
+			$this->tabNameHelper
+		);
+
+		$tabModels = $processor->processTabData( $tabData );
+		$html = $this->renderProcessedTabModels( $tabModels, $args );
+		return $html;
+	}
+
+	private function renderProcessedTabModels( array $tabModels, array $args ): string {
 		$tabsData = [];
 		$addTabPrefixConfig = $this->config->get( 'TabberNeueAddTabPrefix' );
 		foreach ( $tabModels as $tabModel ) {
