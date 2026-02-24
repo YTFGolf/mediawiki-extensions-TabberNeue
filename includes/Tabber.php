@@ -59,7 +59,7 @@ class Tabber {
 			$this->tabNameHelper
 		);
 
-		if ($input == '' && isset($args['label1'])) {
+		if (trim($input) == '' && isset($args['label1'])) {
 			$tabModels = $processor->processTabData( $args );
 		}
 		else {
