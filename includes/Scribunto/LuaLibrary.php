@@ -27,10 +27,6 @@ class LuaLibrary extends LibraryBase {
 		// Instead of converting to wikitext and then parsing it again.
 		$wikitext = $this->convertToWikitext( $tabData );
 
-		if ( $wikitext === '' ) {
-			return '';
-		}
-
 		$parser = $this->getParser();
 		$frame = $parser->getPreprocessor()->newFrame();
 
@@ -52,6 +48,10 @@ class LuaLibrary extends LibraryBase {
 			}
 
 			$wikitext .= '|-|' . $tab['label'] . '=' . $tab['content'];
+		}
+
+		if ( $wikitext === '' ) {
+			throw new LuaError( 'No arguments provided to tabber' );
 		}
 
 		return $wikitext;
