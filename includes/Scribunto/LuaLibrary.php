@@ -29,7 +29,6 @@ class LuaLibrary extends LibraryBase {
 	public function render( $tabData = null): array {
 		$this->checkType( 'mw.ext.tabber.render', 1, $tabData, 'table' );
 
-		/*
 		$templateParser = new TemplateParser( __DIR__ . '/templates' );
 		$tabNameHelper = new TabNameHelper(true);
 		$services = MediaWikiServices::getInstance();
@@ -46,23 +45,8 @@ class LuaLibrary extends LibraryBase {
 		$frame = $parser->getPreprocessor()->newFrame();
 		$parser->setOutputType(4);
 		$rawHtml = $tabber->renderTabData($tabData, [], $parser, $frame);
-		echo "<pre>\n";
-		echo $rawHtml;
-		echo '<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><div style="clear:both"';
-		$po = $this->getParserOptions();
-		echo "\n\n";
-		// print_r($po);
-		echo "\n</pre>";
-		    // $parserOutput = new ParserOutput();
-    // $parserOutput->setText( $rawHtml );
-			return  [Html::rawElement("div", [], $rawHtml)] ;
-		 */
 
-		// TODO: We should pass the data directly to the Tabber classes.
-		// Instead of converting to wikitext and then parsing it again.
-		$wikitext = $this->convertToWikitext( $tabData );
-
-		return [ $this->getParser()->recursiveTagParse( $wikitext ) ];
+		return [ $parser->insertStripItem($rawHtml) ];
 	}
 
 	/**
